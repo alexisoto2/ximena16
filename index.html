@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Felices 16, Eimy Ximena ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --pastel-pink: #fbcfe8;
+            --soft-rose: #f472b6;
+            --deep-rose: #db2777;
+            --card-bg: rgba(255, 255, 255, 0.35);
+            --card-border: rgba(255, 255, 255, 0.6);
+            --text-dark: #4a2840;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fbcfe8 0%, #f3e8ff 50%, #fce7f3 100%);
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 0;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        #canvas-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .main-card {
+            position: relative;
+            z-index: 2;
+            width: 90%;
+            max-width: 650px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 28px;
+            padding: 40px 25px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(219, 39, 119, 0.12);
+        }
+
+        .brand-tag {
+            font-size: 0.75em;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--deep-rose);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.4em;
+            color: var(--deep-rose);
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.6);
+        }
+
+        /* Reproductor de Audio */
+        .audio-player {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 50px;
+            padding: 10px 22px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .audio-btn {
+            background: var(--deep-rose);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(219, 39, 119, 0.3);
+        }
+
+        /* Galería */
+        .section-title {
+            font-size: 1em;
+            font-weight: 600;
+            margin: 25px 0 12px 0;
+            color: var(--deep-rose);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .gallery-item {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 16px;
+            border: 2px dashed var(--soft-rose);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            color: #888;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Carta desplegable */
+        .action-btn {
+            background: linear-gradient(135deg, var(--soft-rose), var(--deep-rose));
+            border: none;
+            color: white;
+            padding: 14px 32px;
+            font-size: 0.95em;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(219, 39, 119, 0.25);
+            transition: transform 0.2s;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.03);
+        }
+
+        .card-reveal {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s ease, opacity 0.6s ease;
+            opacity: 0;
+            text-align: left;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 18px;
+            padding: 0 20px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+        }
+
+        .card-reveal.open {
+            max-height: 500px;
+            opacity: 1;
+            padding: 22px;
+        }
+
+        .card-reveal p {
+            font-size: 0.9em;
+            line-height: 1.7;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        /* Deseos Interactivos */
+        .wishes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .wish-card {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 14px;
+            padding: 12px;
+            font-size: 0.85em;
+            cursor: pointer;
+            border: 1px solid rgba(244, 114, 182, 0.3);
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .wish-card:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-2px);
+        }
+
+        .footer-brand {
+            margin-top: 30px;
+            font-size: 0.7em;
+            letter-spacing: 2px;
+            color: rgba(74, 40, 64, 0.6);
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 2.6em; }
+            .wishes-grid { grid-template-columns: 1fr; }
+            .main-card { padding: 30px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="canvas-bg"></canvas>
+
+    <div class="main-card">
+        <div class="brand-tag">HAUS DEUS DIGITAL</div>
+        <h1>¡Feliz Cumpleaños, Eimy Ximena! 🎉</h1>
+
+        <!-- Reproductor de Audio -->
+        <div class="audio-player">
+            <button class="audio-btn" id="playBtn" onclick="toggleAudio()">▶</button>
+            <span style="font-size: 0.85em; color: var(--text-dark); font-weight: 500;">Escucha esto 🎵</span>
+            <audio id="bgMusic" loop>
+                <source src="musica.mp3" type="audio/mpeg">
+            </audio>
+        </div>
+
+        <!-- Galería de Fotos -->
+        <div class="section-title">Galería de Recuerdos ✨</div>
+        <div class="gallery-grid">
+            <div class="gallery-item" style="background-image: url('foto1.jpg');">Foto 1</div>
+            <div class="gallery-item" style="background-image: url('foto2.jpg');">Foto 2</div>
+            <div class="gallery-item" style="background-image: url('foto3.jpg');">Foto 3</div>
+        </div>
+
+        <!-- Carta Especial -->
+        <button class="action-btn" onclick="toggleLetter()">Abrir Carta Especial 💌</button>
+        <div class="card-reveal" id="letterCard">
+            <p><strong>Querida Eimy Ximena:</strong></p>
+            <p>¡Llegaron tus 16 años! Hoy comienza un capítulo lleno de momentos mágicos, aprendizajes y metas por cumplir.</p>
+            <p>Deseo de todo corazón que este nuevo año de vida esté lleno de alegrías, sonrisas y de todas las cosas hermosas que te mereces. Gracias por ser una persona tan especial e increíble.</p>
+            <p>¡A disfrutar al máximo tu día!</p>
+        </div>
+
+        <!-- Mensajes Interactivos -->
+        <div class="section-title">Toca una sorpresa 🎁</div>
+        <div class="wishes-grid">
+            <div class="wish-card" onclick="alert('✨ Que cada uno de tus sueños se haga realidad este año.')">🌟 Un Deseo</div>
+            <div class="wish-card" onclick="alert('💖 Nunca dejes de sonreír y de brillar como lo haces.')">🌷 Recordatorio</div>
+        </div>
+
+        <div class="footer-brand">HAUS DEUS DIGITAL</div>
+    </div>
+
+    <script>
+        // Fondo de partículas flotantes
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedY = Math.random() * 0.5 + 0.2;
+                this.opacity = Math.random() * 0.5 + 0.3;
+            }
+            update() {
+                this.y -= this.speedY;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(244, 114, 182, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        for (let i = 0; i < 40; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Control de Audio
+        function toggleAudio() {
+            const audio = document.getElementById('bgMusic');
+            const btn = document.getElementById('playBtn');
+            if (audio.paused) {
+                audio.play();
+                btn.innerText = '⏸';
+            } else {
+                audio.pause();
+                btn.innerText = '▶';
+            }
+        }
+
+        // Abrir carta y lanzar confeti
+        let opened = false;
+        function toggleLetter() {
+            const card = document.getElementById('letterCard');
+            card.classList.toggle('open');
+            if (!opened && card.classList.contains('open')) {
+                opened = true;
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#fbcfe8', '#f472b6', '#db2777', '#ffffff']
+                });
+            }
+        }
+    </script>
+</body>
+</html>
